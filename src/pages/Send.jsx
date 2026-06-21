@@ -39,14 +39,13 @@ function Send() {
   return (
     <div>
       <div className="card">
-        <div className="card-title">�� Send RK</div>
+        <div className="card-title">Send RK</div>
         <div className="form-group">
           <label>Recipient Address</label>
           <input
             type="text"
             value={recipient}
             onChange={(e) => setRecipient(e.target.value)}
-            placeholder="0x..."
           />
         </div>
         <div className="form-group">
@@ -55,7 +54,6 @@ function Send() {
             type="number"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
-            placeholder="0.0"
             step="0.000001"
             min="0"
           />
@@ -76,7 +74,7 @@ function Send() {
           onClick={handleSend}
           disabled={loading}
         >
-          {loading ? '⏳ Sending...' : '�� Send'}
+          {loading ? '⏳ Sending...' : 'Send'}
         </button>
         {status && (
           <div style={{ marginTop: '12px', textAlign: 'center', fontSize: '0.9rem' }}>

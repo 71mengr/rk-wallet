@@ -7,7 +7,7 @@ function Header({ pageTitle }) {
   const copyAddress = () => {
     if (address) {
       navigator.clipboard.writeText(address);
-      showToast('�� Address copied!', 'success');
+      showToast('Address copied.', 'success');
     }
   };
 

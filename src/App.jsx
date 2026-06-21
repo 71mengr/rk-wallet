@@ -20,7 +20,7 @@ function App() {
       '/send': 'Send',
       '/receive': 'Receive',
       '/transactions': 'Transactions',
-      '/rotating-kings': '�� Rotating Kings',
+      '/rotating-kings': 'Rotating Kings',
       '/settings': 'Settings'
     };
     setPageTitle(titles[location.pathname] || 'Dashboard');

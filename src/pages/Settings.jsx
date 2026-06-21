@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useWallet } from '../context/WalletContext';
 
 function Settings() {
-  const { address, blockNumber, networkInfo, logout, showToast } = useWallet();
+  const { address, blockNumber, networkInfo, wallet, logout, showToast } = useWallet();
   const [darkMode, setDarkMode] = useState(true);
   const [rpcUrl, setRpcUrl] = useState('http://187.124.217.73:8545');
 
@@ -18,11 +18,16 @@ function Settings() {
 
   const saveSettings = async () => {
     await window.electronAPI.setStore('settings', { darkMode, rpcUrl });
-    showToast('✅ Settings saved!', 'success');
+    showToast('Settings saved. Restart balance syncing if the RPC endpoint changed.', 'success');
   };
 
-  const exportWallet = () => {
-    showToast('�� Wallet export coming soon', 'info');
+  const exportWallet = async () => {
+    if (!wallet?.privateKey) {
+      showToast('No wallet loaded.', 'error');
+      return;
+    }
+    await navigator.clipboard.writeText(wallet.privateKey);
+    showToast('Private key copied to clipboard. Keep it secret.', 'warning');
   };
 
   return (
@@ -54,21 +59,21 @@ function Settings() {
           </label>
         </div>
         <button className="btn btn-primary" onClick={saveSettings}>
-          �� Save Settings
+          Save Settings
         </button>
       </div>
 
       <div className="card">
-        <div className="card-title">�� Wallet</div>
+        <div className="card-title">Wallet</div>
         <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '8px' }}>
           Address: <span style={{ fontFamily: 'monospace', color: 'var(--text-primary)' }}>{address || '—'}</span>
         </div>
         <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
           <button className="btn btn-secondary" onClick={exportWallet}>
-            �� Export Wallet
+            Export Wallet
           </button>
           <button className="btn btn-danger" onClick={logout}>
-            �� Logout
+            Logout
           </button>
         </div>
       </div>

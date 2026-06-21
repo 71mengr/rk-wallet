@@ -78,6 +78,11 @@ body {
   color: var(--accent);
 }
 
+.sidebar-logo img {
+  width: 36px;
+  height: 36px;
+}
+
 .sidebar-logo small {
   font-size: 0.55rem;
   color: var(--text-secondary);

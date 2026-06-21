@@ -1,5 +1,20 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
+const Store = require('electron-store');
+
+const store = new Store({
+  name: 'rk-wallet'
+});
+
+ipcMain.handle('store-get', (_event, key) => store.get(key));
+ipcMain.handle('store-set', (_event, key, value) => {
+  store.set(key, value);
+  return true;
+});
+ipcMain.handle('store-delete', (_event, key) => {
+  store.delete(key);
+  return true;
+});
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -12,7 +27,7 @@ function createWindow() {
       contextIsolation: true,
       preload: path.join(__dirname, 'preload.js')
     },
-    icon: path.join(__dirname, '../build/icon.png'),
+    icon: path.join(__dirname, '../images/icon.png'),
     show: false
   });
 
@@ -27,6 +42,12 @@ function createWindow() {
 }
 
 app.whenReady().then(createWindow);
+
+app.on('activate', () => {
+  if (BrowserWindow.getAllWindows().length === 0) {
+    createWindow();
+  }
+});
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {

@@ -16,7 +16,7 @@ function Receive() {
   return (
     <div>
       <div className="card" style={{ textAlign: 'center' }}>
-        <div className="card-title" style={{ justifyContent: 'center' }}>�� Receive RK</div>
+        <div className="card-title" style={{ justifyContent: 'center' }}>Receive RK</div>
         <div className="qr-container">
           <QRCodeSVG value={address} size={200} bgColor="white" fgColor="#0a0e1a" />
         </div>
@@ -30,7 +30,7 @@ function Receive() {
           style={{ marginTop: '12px', display: 'inline-flex' }}
           onClick={() => { navigator.clipboard.writeText(address); }}
         >
-          �� Copy Address
+          Copy Address
         </button>
         <p style={{ marginTop: '12px', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
           Share this address to receive RK tokens

@@ -9,7 +9,7 @@ export function WalletProvider({ children }) {
   const [balance, setBalance] = useState('0');
   const [address, setAddress] = useState('');
   const [blockNumber, setBlockNumber] = useState(0);
-  const [networkInfo, setNetworkInfo] = useState({ name: 'TKM Chain', chainId: 12345 });
+  const [networkInfo] = useState({ name: 'TKM Chain', chainId: 12345 });
   const [isConnected, setIsConnected] = useState(false);
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState(null);
@@ -19,8 +19,9 @@ export function WalletProvider({ children }) {
     const loadWallet = async () => {
       try {
         const stored = await window.electronAPI.getStore('wallet');
-        if (stored) {
-          const walletInstance = new ethers.Wallet(stored.privateKey);
+        await rpcClient.loadSettings();
+        if (stored?.privateKey) {
+          const walletInstance = new ethers.Wallet(stored.privateKey, rpcClient.getProvider());
           setWallet(walletInstance);
           setAddress(walletInstance.address);
           setIsConnected(true);
@@ -70,7 +71,7 @@ export function WalletProvider({ children }) {
   const createWallet = async (password) => {
     setLoading(true);
     try {
-      const newWallet = ethers.Wallet.createRandom();
+      const newWallet = ethers.Wallet.createRandom().connect(rpcClient.getProvider());
       setWallet(newWallet);
       setAddress(newWallet.address);
       setIsConnected(true);
@@ -97,7 +98,12 @@ export function WalletProvider({ children }) {
   const importWallet = async (privateKey) => {
     setLoading(true);
     try {
-      const walletInstance = new ethers.Wallet(privateKey);
+      const normalizedKey = privateKey.trim();
+      const keyWithPrefix = normalizedKey.startsWith('0x') ? normalizedKey : `0x${normalizedKey}`;
+      if (!ethers.utils.isHexString(keyWithPrefix, 32)) {
+        throw new Error('Enter a valid 64-character private key, with or without 0x.');
+      }
+      const walletInstance = new ethers.Wallet(keyWithPrefix, rpcClient.getProvider());
       setWallet(walletInstance);
       setAddress(walletInstance.address);
       setIsConnected(true);
@@ -120,13 +126,12 @@ export function WalletProvider({ children }) {
     if (!wallet) throw new Error('No wallet loaded');
     setLoading(true);
     try {
-      const provider = rpcClient.getProvider();
-      const tx = await wallet.sendTransaction({
+      const tx = await wallet.connect(rpcClient.getProvider()).sendTransaction({
         to,
         value: ethers.utils.parseEther(amount.toString()),
         gasLimit: 21000
       });
-      showToast(`�� Transaction sent! ${tx.hash.slice(0, 16)}...`, 'success');
+      showToast(`✅ Transaction sent! ${tx.hash.slice(0, 16)}...`, 'success');
       await updateBalance(address);
       return tx;
     } catch (e) {
@@ -147,7 +152,7 @@ export function WalletProvider({ children }) {
     setAddress('');
     setIsConnected(false);
     await window.electronAPI.deleteStore('wallet');
-    showToast('�� Logged out', '');
+    showToast('✅ Logged out', 'success');
   };
 
   return (

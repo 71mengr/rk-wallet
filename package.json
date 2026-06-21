@@ -7,7 +7,7 @@
   "scripts": {
     "start": "electron .",
     "build": "vite build",
-    "dist:windows": "npm run build && electron-builder --win --x64",
+    "dist:windows": "npm run build && electron-builder --win --x64 --config.compression=maximum",
     "dist:linux": "npm run build && electron-builder --linux --x64",
     "dist:mac": "npm run build && electron-builder --mac --x64"
   },
@@ -36,13 +36,17 @@
     "files": [
       "electron/**/*",
       "dist/**/*",
+      "images/**/*",
+      "package.json",
       "!node_modules/.cache",
       "!**/*.map",
-      "!**/*.md"
+      "!**/*.md",
+      "!**/test{,s}/**/*",
+      "!**/*.log"
     ],
     "win": {
       "target": "nsis",
-      "icon": "build/icon.ico"
+      "icon": "images/icon.ico"
     },
     "nsis": {
       "oneClick": false,
@@ -52,13 +56,16 @@
     },
     "linux": {
       "target": "AppImage",
-      "icon": "build/icon.png",
+      "icon": "images/icon.png",
       "category": "Finance"
     },
     "mac": {
       "target": "dmg",
       "icon": "build/icon.icns",
       "category": "public.app-category.finance"
-    }
+    },
+    "asar": true,
+    "npmRebuild": false,
+    "removePackageScripts": true
   }
 }
