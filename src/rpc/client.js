@@ -68,6 +68,22 @@ export const rpcClient = {
     return this.call('eth_gasPrice', []);
   },
 
+  async getRkList() {
+    return this.call('rk_list', []);
+  },
+
+  async getRkStatus() {
+    return this.call('rk_status', []);
+  },
+
+  async getRkStats() {
+    return this.call('rk_stats', []);
+  },
+
+  async addRk() {
+    return this.call('rk_add', []);
+  },
+
   async getRotatingKing(blockNumber) {
     const block = blockNumber || await this.getBlockNumber();
     const index = Math.floor(block / 100);

@@ -18,10 +18,9 @@ function Dashboard() {
 
   const updateKings = async () => {
     try {
-      const current = await rpcClient.getRotatingKing(blockNumber);
-      const next = await rpcClient.getRotatingKing(blockNumber + 1);
-      setRotatingKing(current);
-      setNextKing(next);
+      const status = await rpcClient.getRkStatus();
+      setRotatingKing(status?.currentKing || status?.mainKing);
+      setNextKing(status?.nextKing);
     } catch (e) {
       console.warn('Failed to update kings:', e);
     }
@@ -34,7 +33,12 @@ function Dashboard() {
   };
 
   const registerAsKing = () => {
-    showToast('Registration uses your configured TKM Chain contract endpoint.', 'info');
+    rpcClient.addRk()
+      .then(() => {
+        showToast('Rotating King registration submitted.', 'success');
+        updateKings();
+      })
+      .catch((e) => showToast(`Registration failed: ${e.message}`, 'error'));
   };
 
   if (!isConnected) {
